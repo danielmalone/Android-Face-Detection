@@ -3,7 +3,7 @@
           package="com.finepointmobile.facedetectionapp">
 
     <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera2"/>
+    <uses-feature android:name="android.hardware.camera"/>
     <meta-data
         android:name="com.google.android.gms.vision.DEPENDENCIES"
         android:value="face"/>

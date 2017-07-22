@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -13,10 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-
-import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
                 int cameraPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA);
                 if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 200);
-                    Log.d(TAG, "onClick: show permission dialog");
                 } else {
                     openCamera();
                 }
@@ -57,16 +52,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d(TAG, "onRequestPermissionsResult: " + requestCode);
         if (requestCode == 200 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openCamera();
         }
     }
 
-    private void doFaceRecognition() {
-        InputStream stream = getResources().openRawResource(R.raw.face);
-        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 200 && resultCode == RESULT_OK) {
+            Bundle bundle = data.getExtras();
+            Bitmap image = (Bitmap) bundle.get("data");
+            doFaceRecognition(image);
+        }
+    }
 
-        mFaceOverlayView.setBitmap(bitmap);
+    private void doFaceRecognition(Bitmap image) {
+        mFaceOverlayView.setBitmap(image);
     }
 }
